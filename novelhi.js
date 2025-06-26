@@ -1,6 +1,4 @@
-import { Plugin } from '@lnreader/core';
-
-const NovelHi: Plugin = {
+export default {
   id: 'novelhi',
   name: 'NovelHi',
   site: 'https://novelhi.com',
@@ -10,7 +8,8 @@ const NovelHi: Plugin = {
 
   async popularNovels(page) {
     const url = `https://novelhi.com/popular?page=${page}`;
-    const body = await fetch(url).then(res => res.text());
+    const res = await fetch(url);
+    const body = await res.text();
     const $ = cheerio.load(body);
     const novels = [];
 
@@ -26,7 +25,8 @@ const NovelHi: Plugin = {
 
   async parseNovelAndChapters(novelUrl) {
     const url = `https://novelhi.com${novelUrl}`;
-    const body = await fetch(url).then(res => res.text());
+    const res = await fetch(url);
+    const body = await res.text();
     const $ = cheerio.load(body);
 
     const title = $('h1').text().trim();
@@ -41,25 +41,21 @@ const NovelHi: Plugin = {
       });
     });
 
-    return {
-      title,
-      cover,
-      author,
-      chapters,
-    };
+    return { title, cover, author, chapters };
   },
 
   async parseChapter(chapterUrl) {
     const url = `https://novelhi.com${chapterUrl}`;
-    const body = await fetch(url).then(res => res.text());
+    const res = await fetch(url);
+    const body = await res.text();
     const $ = cheerio.load(body);
-    const content = $('.chapter-content').html();
-    return content;
+    return $('.chapter-content').html();
   },
 
   async searchNovels(searchTerm) {
     const url = `https://novelhi.com/search?keyword=${encodeURIComponent(searchTerm)}`;
-    const body = await fetch(url).then(res => res.text());
+    const res = await fetch(url);
+    const body = await res.text();
     const $ = cheerio.load(body);
     const novels = [];
 
@@ -71,7 +67,5 @@ const NovelHi: Plugin = {
     });
 
     return novels;
-  }
+  },
 };
-
-export default NovelHi;
