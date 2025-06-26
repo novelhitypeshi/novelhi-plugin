@@ -7,27 +7,25 @@ export default {
   icon: '🌐',
 
   async popularNovels(page) {
-    const url = `https://novelhi.com/popular?page=${page}`;
-    const res = await fetch(url);
-    const body = await res.text();
-    const $ = cheerio.load(body);
+    const res = await fetch(`https://novelhi.com/popular?page=${page}`);
+    const text = await res.text();
+    const $ = cheerio.load(text);
     const novels = [];
 
     $('.book-item').each((_, el) => {
       const name = $(el).find('.book-name').text().trim();
       const cover = $(el).find('img').attr('src');
-      const novelUrl = $(el).find('a').attr('href');
-      novels.push({ name, cover, url: novelUrl });
+      const url = $(el).find('a').attr('href');
+      novels.push({ name, cover, url });
     });
 
     return novels;
   },
 
   async parseNovelAndChapters(novelUrl) {
-    const url = `https://novelhi.com${novelUrl}`;
-    const res = await fetch(url);
-    const body = await res.text();
-    const $ = cheerio.load(body);
+    const res = await fetch(`https://novelhi.com${novelUrl}`);
+    const text = await res.text();
+    const $ = cheerio.load(text);
 
     const title = $('h1').text().trim();
     const cover = $('.book-img img').attr('src');
@@ -35,37 +33,32 @@ export default {
 
     const chapters = [];
     $('.chapter-list a').each((_, el) => {
-      chapters.push({
-        name: $(el).text().trim(),
-        url: $(el).attr('href'),
-      });
+      chapters.push({ name: $(el).text().trim(), url: $(el).attr('href') });
     });
 
     return { title, cover, author, chapters };
   },
 
   async parseChapter(chapterUrl) {
-    const url = `https://novelhi.com${chapterUrl}`;
-    const res = await fetch(url);
-    const body = await res.text();
-    const $ = cheerio.load(body);
+    const res = await fetch(`https://novelhi.com${chapterUrl}`);
+    const text = await res.text();
+    const $ = cheerio.load(text);
     return $('.chapter-content').html();
   },
 
   async searchNovels(searchTerm) {
-    const url = `https://novelhi.com/search?keyword=${encodeURIComponent(searchTerm)}`;
-    const res = await fetch(url);
-    const body = await res.text();
-    const $ = cheerio.load(body);
+    const res = await fetch(`https://novelhi.com/search?keyword=${encodeURIComponent(searchTerm)}`);
+    const text = await res.text();
+    const $ = cheerio.load(text);
     const novels = [];
 
     $('.book-item').each((_, el) => {
       const name = $(el).find('.book-name').text().trim();
       const cover = $(el).find('img').attr('src');
-      const novelUrl = $(el).find('a').attr('href');
-      novels.push({ name, cover, url: novelUrl });
+      const url = $(el).find('a').attr('href');
+      novels.push({ name, cover, url });
     });
 
     return novels;
-  },
+  }
 };
